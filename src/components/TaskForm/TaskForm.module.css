@@ -18,17 +18,38 @@
   resize: vertical;
 }
 
-.submitButton {
+.buttonGroup {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.submitButton,
+.cancelButton {
+  flex: 1;
   padding: 7px;
-  background-color: #28a745;
-  color: white;
   border: none;
   border-radius: 7px;
+  font-size: 16px;
   cursor: pointer;
   transition: background-color 0.3s ease;
-  margin-bottom: 15px;
+}
+
+.submitButton {
+  background-color: #28a745;
+  color: white;
 }
 
 .submitButton:hover {
   background-color: #218838;
+}
+
+.cancelButton {
+  background-color: #dc3545;
+  color: white;
+}
+
+.cancelButton:hover {
+  background-color: #c82333;
 }

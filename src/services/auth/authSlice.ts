@@ -1,19 +1,13 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { IAuthState } from '../../interfaces/interfaces';
 
-interface AuthState {
-  isAuthenticated: boolean;
-  token: string | null;
-  username: string | null;
-  email: string | null;
-  error: string | null;
-}
-
-const initialState: AuthState = {
+const initialState: IAuthState = {
   isAuthenticated: false,
   token: localStorage.getItem('token'),
   username: null,
   email: null,
   error: null,
+  isLoading: false,
 };
 
 
@@ -21,7 +15,11 @@ const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
+    setIsLoading: (state, action: PayloadAction<boolean>) => {
+      state.isLoading = action.payload;
+    },
     loginSuccess(state, action: PayloadAction<{ token: string; username: string }>) {
+      state.isLoading = true;
       state.isAuthenticated = true;
       state.token = action.payload.token;
       state.username = action.payload.username;
@@ -29,6 +27,7 @@ const authSlice = createSlice({
       localStorage.setItem('token', action.payload.token);
     },
     registerSuccess(state, action: PayloadAction<{ token: string | null; email: string }>) {
+      state.isLoading = false;
       state.isAuthenticated = true;
       state.token = action.payload.token;
       state.email = action.payload.email;
@@ -38,17 +37,19 @@ const authSlice = createSlice({
       }
     },
     authFailure(state, action: PayloadAction<string>) {
+      state.isLoading = false;
       state.error = action.payload;
     },
-    logout(state) {
-      state.isAuthenticated = false;
-      state.token = null;
-      state.username = null;
-      state.email = null;
-      localStorage.removeItem('token');
+    initializeAuth(state) {
+      if (state.token) {
+        state.isAuthenticated = true;
+      }
     },
   },
 });
 
-export const { loginSuccess, registerSuccess, authFailure, logout } = authSlice.actions;
+export const { setIsLoading,loginSuccess, registerSuccess, authFailure, initializeAuth } = authSlice.actions;
 export default authSlice.reducer;
+
+
+

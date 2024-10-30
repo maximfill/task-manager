@@ -1,10 +1,11 @@
-import { loginSuccess, registerSuccess, authFailure } from './authSlice';
+import { loginSuccess, registerSuccess, authFailure, setIsLoading } from './authSlice';
 import { login, register } from './authService';
 import { AppDispatch } from '../store';
 import { NavigateFunction } from 'react-router-dom';
 
 
 export const loginUser = (username: string, password: string, navigate: NavigateFunction) => async (dispatch: AppDispatch) => {
+  dispatch(setIsLoading(true));
   try {
     const token = await login(username, password);
     if (token) {
@@ -15,15 +16,18 @@ export const loginUser = (username: string, password: string, navigate: Navigate
   } catch (error) {
     dispatch(authFailure('Login failed'));
   }
+  dispatch(setIsLoading(false));
 };
 
 
-export const registerUser = (email: string, password: string) => async (dispatch: AppDispatch) => {
-  try {
-    await register(email, password);
+export const registerUser = (email: string, password: string, navigate: NavigateFunction) => async (dispatch: AppDispatch) => {
+  dispatch(setIsLoading(true));
+  const errorMessage = await register(email, password);
+  if (!errorMessage) {
     dispatch(registerSuccess({ token: null, email }));
-
-  } catch (error) {
-    dispatch(authFailure('Registration failed'));
+    navigate('/login');
+  } else {
+    dispatch(authFailure(errorMessage));
   }
+  dispatch(setIsLoading(false));
 };

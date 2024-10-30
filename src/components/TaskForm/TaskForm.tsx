@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState, useAppDispatch } from '../../services/store';
 import { addTask, updateTask } from '../../services/todos/todosActions';
+import { isBefore, parseISO, format } from 'date-fns';
 import {
   setTitle,
   setDescription,
@@ -10,7 +11,6 @@ import {
   closeModal,
 } from '../../services/todos/todosSlice';
 import styles from './TaskForm.module.css';
-import { format } from 'date-fns';
 
 const TaskForm: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -21,28 +21,35 @@ const TaskForm: React.FC = () => {
   const tasks = useSelector((state: RootState) => state.todos.tasks);
   const token = useSelector((state: RootState) => state.auth.token);
 
-useEffect(() => {
-  if (editingTaskId !== null) {
-    const taskToEdit = tasks.find(task => task.id === editingTaskId);
-    if (taskToEdit) {
-      dispatch(setTitle(taskToEdit.title));
-      dispatch(setDescription(taskToEdit.description));
-      const formattedDueDate = format(new Date(taskToEdit.dueDate), 'yyyy-MM-dd');
-      dispatch(setDueDate(formattedDueDate));
+  useEffect(() => {
+    if (editingTaskId !== null) {
+      const taskToEdit = tasks.find(task => task.id === editingTaskId);
+      if (taskToEdit) {
+        dispatch(setTitle(taskToEdit.title));
+        dispatch(setDescription(taskToEdit.description));
+        const formattedDueDate = format(new Date(taskToEdit.dueDate), 'yyyy-MM-dd');
+        dispatch(setDueDate(formattedDueDate));
+      }
     }
-  }
-}, [editingTaskId, tasks, dispatch]);
+  }, [editingTaskId, tasks, dispatch]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-  
+    const today = new Date();
+    const selectedDate = parseISO(dueDate);
+
+    if (isBefore(selectedDate, today)) {
+      alert("Please select a current or future date.");
+      return;
+    }
+
     const newTask = {
       title,
       description,
       isCompleted: false,
       dueDate,
     };
-  
+
     if (token) {
       if (editingTaskId !== null) {
         dispatch(updateTask(newTask, token, editingTaskId));
@@ -52,6 +59,11 @@ useEffect(() => {
       dispatch(clearForm());
       dispatch(closeModal());
     }
+  };
+
+  const handleCancel = () => {
+    dispatch(clearForm());
+    dispatch(closeModal());
   };
 
   return (
@@ -78,9 +90,14 @@ useEffect(() => {
         className={styles.input}
         required
       />
-      <button type="submit" className={styles.submitButton}>
-        {editingTaskId !== null ? 'Edit Task' : 'Save Task'}
-      </button>
+      <div className={styles.buttonGroup}>
+        <button type="submit" className={styles.submitButton}>
+          {editingTaskId !== null ? 'Edit Task' : 'Save Task'}
+        </button>
+        <button type="button" onClick={handleCancel} className={styles.cancelButton}>
+          Cancel
+        </button>
+      </div>
     </form>
   );
 };

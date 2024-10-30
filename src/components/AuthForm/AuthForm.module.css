@@ -19,17 +19,57 @@
   border-radius: 5px;
 }
 
-.submitButton, .toggleButton {
+.button {
+  width: 100%;
   padding: 10px;
-  background-color: #28a745;
+  font-size: 16px;
+  text-align: center;
+  cursor: pointer;
+  box-sizing: border-box;
+  margin-top: 10px;
+}
+
+.submitButton {
+  background-color: #4CAF50;
   color: white;
   border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-  margin-bottom: 10px;
+}
+
+.toggleButton {
+  background-color: #f44336;
+  color: white;
+  border: none;
 }
 
 .submitButton:hover, .toggleButton:hover {
   background-color: #218838;
+}
+
+.error {
+  color: red;
+  margin-top: 5px;
+  font-size: 0.9em;
+}
+
+.loader {
+  font-size: 16px;
+  color: #333;
+  text-align: center;
+}
+
+.loader::before {
+  content: '';
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  border: 3px solid #333;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
 }

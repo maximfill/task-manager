@@ -14,11 +14,12 @@ const AuthForm: React.FC = () => {
 
   const dispatch = useAppDispatch();
   const error = useSelector((state: RootState) => state.auth.error);
+  const isLoading = useSelector((state: RootState) => state.auth.isLoading);
 
   const handleAuthSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (isRegister) {
-      dispatch(registerUser(email, password));
+      dispatch(registerUser(email, password, navigate));
     } else {
       dispatch(loginUser(username, password, navigate));
     }
@@ -54,12 +55,16 @@ const AuthForm: React.FC = () => {
           autoComplete="current-password"
         />
         {error && <p className={styles.error}>{error}</p>}
-        <button type="submit" className={styles.submitButton}>
-          {isRegister ? 'Register' : 'Login'}
+        {isLoading ? (
+          <div className={styles.loader}>Загрузка...</div>
+        ) : (
+        <button type="submit" className={`${styles.button} ${styles.submitButton}`}>
+          {isRegister ? 'Зарегистрироваться' : 'Войти'}
         </button>
+        )}
       </form>
-      <button className={styles.toggleButton} onClick={() => setIsRegister(!isRegister)}>
-        {isRegister ? 'Already have an account? Login' : "Don't have an account? Register"}
+      <button className={`${styles.button} ${styles.toggleButton}`} onClick={() => setIsRegister(!isRegister)}>
+        {isRegister ? 'У вас уже есть аккаунт? Войти' : "Нет аккаунта? Зарегистрироваться"}
       </button>
     </div>
   );

@@ -1,4 +1,3 @@
-// src/components/TaskItem/TaskItem.tsx
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { RootState, useAppDispatch } from '../../services/store';
@@ -6,11 +5,11 @@ import { toggleCompleteTask, setEditingTask, openModal } from '../../services/to
 import { deleteTask } from '../../services/todos/todosActions';
 import styles from './TaskItem.module.css';
 
-interface TaskItemProps {
+interface ITaskItemProps {
   taskId: number;
 }
 
-const TaskItem: React.FC<TaskItemProps> = ({ taskId }) => {
+const TaskItem: React.FC<ITaskItemProps> = ({ taskId }) => {
   const task = useSelector((state: RootState) =>
     state.todos.tasks.find((task) => task.id === taskId)
   );
@@ -29,8 +28,10 @@ const TaskItem: React.FC<TaskItemProps> = ({ taskId }) => {
 
   return (
     <div className={`${styles.taskItem} ${task.completed ? styles.completed : ''}`}>
-      <h3 className={styles.title}>{task.title}</h3>
-      <p className={styles.description}>{task.description}</p>
+      <h3 className={`${styles.title} ${task.completed ? styles.completed : ''}`}>{task.title}</h3>
+      <p className={`${styles.description} ${task.completed ? styles.completed : ''}`}>
+        {task.description}
+      </p>
       <p className={styles.dueDate}>Due: {task.dueDate}</p>
       <div className={styles.actions}>
         <button

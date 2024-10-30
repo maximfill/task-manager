@@ -2,16 +2,10 @@ import { AppDispatch } from '../store';
 import { addTaskStart, addTaskFailure } from './todosSlice';
 import { fetchTasks } from './todosService';
 import { addTaskToServer, updateTaskOnServer, deleteTaskFromServer } from './todosService';
-
-interface NewTask {
-  title: string;
-  description: string;
-  isCompleted: boolean;
-  dueDate: string;
-}
+import { INewTask } from '../../interfaces/interfaces';
 
 
-export const addTask = (task: NewTask, token: string) => async (dispatch: AppDispatch) => {
+export const addTask = (task: INewTask, token: string) => async (dispatch: AppDispatch) => {
   dispatch(addTaskStart());
   try {
     await addTaskToServer(task, token);
@@ -23,7 +17,7 @@ export const addTask = (task: NewTask, token: string) => async (dispatch: AppDis
 };
 
 
-export const updateTask = (task: NewTask, token: string, taskId: number) => async (dispatch: AppDispatch) => {
+export const updateTask = (task: INewTask, token: string, taskId: number) => async (dispatch: AppDispatch) => {
   dispatch(addTaskStart());
   try {
     await updateTaskOnServer(task, token, taskId);
@@ -44,4 +38,3 @@ export const deleteTask = (taskId: number, token: string) => async (dispatch: Ap
     console.error('Failed to delete task', error);
   }
 };
-

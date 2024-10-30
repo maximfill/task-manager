@@ -1,5 +1,6 @@
 import { AppDispatch } from '../store';
 import { fetchTasksStart, fetchTasksSuccess, fetchTasksFailure } from './todosSlice';
+import { INewTask } from '../../interfaces/interfaces';
 
 
 export const fetchTasks = (token: string) => async (dispatch: AppDispatch) => {
@@ -27,14 +28,7 @@ export const fetchTasks = (token: string) => async (dispatch: AppDispatch) => {
 };
 
 
-interface NewTask {
-  title: string;
-  description: string;
-  isCompleted: boolean;
-  dueDate: string;
-}
-
-export const addTaskToServer = async (task: NewTask, token: string): Promise<void> => {
+export const addTaskToServer = async (task: INewTask, token: string): Promise<void> => {
   const response = await fetch('http://api.calmplete.net/api/Todos', {
     method: 'POST',
     headers: {
@@ -55,7 +49,7 @@ export const addTaskToServer = async (task: NewTask, token: string): Promise<voi
 };
 
 
-export const updateTaskOnServer = async (task: NewTask, token: string, taskId: number): Promise<void> => {
+export const updateTaskOnServer = async (task: INewTask, token: string, taskId: number): Promise<void> => {
   const response = await fetch(`http://api.calmplete.net/api/Todos/${taskId}`, {
     method: 'PUT',
     headers: {
@@ -73,18 +67,24 @@ export const updateTaskOnServer = async (task: NewTask, token: string, taskId: n
 
 
 export const deleteTaskFromServer = async (taskId: number, token: string): Promise<void> => {
-  const response = await fetch(`http://api.calmplete.net/api/Todos/${taskId}`, {
-    method: 'DELETE',
-    headers: {
-      'Authorization': `Bearer ${token}`,
-    },
-  });
+  try {
+    const response = await fetch(`http://api.calmplete.net/api/Todos/${taskId}`, {
+      method: 'DELETE',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    });
 
-  if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(errorData.message || 'Failed to delete task');
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || 'Failed to delete task');
+    }
+  } catch (error) {
+    console.error('Error during task deletion:', error);
+    throw error;
   }
 };
+
 
 
 

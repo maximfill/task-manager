@@ -1,25 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { ITodosState, ITask } from '../../interfaces/interfaces';
 
-interface Task {
-  id: number;
-  title: string;
-  description: string;
-  dueDate: string;
-  completed: boolean;
-}
-
-interface TodosState {
-  tasks: Task[];
-  title: string;
-  description: string;
-  dueDate: string;
-  isModalOpen: boolean;
-  editingTaskId: number | null;
-  loading: boolean;
-  error: string | null;
-}
-
-const initialState: TodosState = {
+const initialState: ITodosState = {
   tasks: [],
   title: '',
   description: '',
@@ -53,7 +35,7 @@ const todosSlice = createSlice({
       state.loading = true;
       state.error = null;
     },
-    addTaskSuccess(state, action: PayloadAction<Task>) {
+    addTaskSuccess(state, action: PayloadAction<ITask>) {
       state.loading = false;
       state.tasks.push(action.payload);
     },
@@ -65,7 +47,7 @@ const todosSlice = createSlice({
       state.loading = true;
       state.error = null;
     },
-    fetchTasksSuccess(state, action: PayloadAction<Task[]>) {
+    fetchTasksSuccess(state, action: PayloadAction<ITask[]>) {
       state.loading = false;
       state.tasks = action.payload;
     },
@@ -73,7 +55,7 @@ const todosSlice = createSlice({
       state.loading = false;
       state.error = action.payload;
     },
-    editTask(state, action: PayloadAction<Task>) {
+    editTask(state, action: PayloadAction<ITask>) {
       const index = state.tasks.findIndex((task) => task.id === action.payload.id);
       if (index !== -1) {
         state.tasks[index] = action.payload;
@@ -95,16 +77,6 @@ const todosSlice = createSlice({
       state.isModalOpen = false;
       state.editingTaskId = null;
     },
-    updateTask(state, action: PayloadAction<Task>) {
-      const updatedTask = action.payload;
-      const index = state.tasks.findIndex(task => task.id === updatedTask.id);
-      if (index !== -1) {
-        state.tasks[index] = updatedTask;
-      }
-    },
-    deleteTask(state, action: PayloadAction<number>) {
-      state.tasks = state.tasks.filter(task => task.id !== action.payload);
-    },
   },
 });
 
@@ -124,8 +96,6 @@ export const {
   setEditingTask,
   openModal,
   closeModal,
-  updateTask,
-  deleteTask,
 } = todosSlice.actions;
 
 export default todosSlice.reducer;
