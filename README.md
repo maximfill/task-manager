@@ -23,12 +23,3 @@ This project provides a platform for managing tasks effectively with user-friend
     •	npm install
     •	npm run start
     •	The app should now be accessible at http://localhost:3001/
-
-## Comprehensive Testing with Cypress 🚥
-
-    •	npm run start
-    •	npm run cypress in another terminal
-
-## Project link
-
-    •	https://github.com/maximfill/task-manager.git
